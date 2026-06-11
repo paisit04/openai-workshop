@@ -124,6 +124,7 @@ MCP_HTTP_HOST=127.0.0.1
 MCP_HTTP_PORT=3000
 MCP_HTTP_PATH=/mcp
 MCP_BEARER_TOKEN=replace_with_a_long_random_token
+MCP_ALLOWED_HOSTS=crawler.example.com,crawler-fpyq5he5q-paisit04s-projects.vercel.app
 ```
 
 Health check:
@@ -137,6 +138,8 @@ curl http://127.0.0.1:3000/health
 ```text
 Authorization: Bearer <MCP_BEARER_TOKEN>
 ```
+
+`MCP_ALLOWED_HOSTS` is optional locally. On Vercel, `VERCEL_URL` is allowed automatically; set `MCP_ALLOWED_HOSTS` for custom domains or pinned deployment URLs.
 
 Debug tool listing for Postman or a browser:
 

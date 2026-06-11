@@ -7,7 +7,7 @@ import { createPharmacyMcpServer, getPharmacyMcpToolSummaries } from './mcp-serv
 export function createPharmacyHttpApp() {
   const mcpPath = process.env.MCP_HTTP_PATH ?? '/mcp';
   const bearerToken = process.env.MCP_BEARER_TOKEN;
-  const app = createMcpExpressApp();
+  const app = createMcpExpressApp({ allowedHosts: getAllowedHosts() });
   const sessions = new Map();
 
   app.get('/health', (_req, res) => {
@@ -144,4 +144,20 @@ export function createPharmacyHttpApp() {
 function readSessionId(req) {
   const sessionId = req.headers['mcp-session-id'];
   return Array.isArray(sessionId) ? sessionId[0] : sessionId;
+}
+
+function getAllowedHosts() {
+  return [
+    '127.0.0.1',
+    'localhost',
+    '::1',
+    process.env.VERCEL_URL,
+    ...splitCsv(process.env.MCP_ALLOWED_HOSTS),
+  ].filter(Boolean);
+}
+
+function splitCsv(value) {
+  return value
+    ? value.split(',').map(item => item.trim()).filter(Boolean)
+    : [];
 }
