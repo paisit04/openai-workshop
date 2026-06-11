@@ -6,6 +6,7 @@ import { createPharmacyMcpServer, getPharmacyMcpToolSummaries } from './mcp-serv
 
 export function createPharmacyHttpApp() {
   const mcpPath = process.env.MCP_HTTP_PATH ?? '/mcp';
+  const bearerToken = process.env.MCP_BEARER_TOKEN;
   const app = createMcpExpressApp();
   const sessions = new Map();
 
@@ -17,6 +18,29 @@ export function createPharmacyHttpApp() {
       mcpPath,
       toolsPath: '/tools',
     });
+  });
+
+  app.use((req, res, next) => {
+    if (req.path === '/health' || !bearerToken) {
+      next();
+      return;
+    }
+
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
+
+    if (token === bearerToken) {
+      next();
+      return;
+    }
+
+    res
+      .status(401)
+      .set('WWW-Authenticate', 'Bearer')
+      .json({
+        error: 'unauthorized',
+        message: 'Missing or invalid bearer token.',
+      });
   });
 
   app.get('/tools', (_req, res) => {

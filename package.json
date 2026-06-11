@@ -7,7 +7,8 @@
     "mcp": "node scripts/mcp-server.mjs",
     "mcp:http": "node scripts/mcp-http-server.mjs",
     "metrics": "node scripts/get-system-overview-metrics.mjs",
-    "incoming": "node scripts/get-incoming-requests.mjs"
+    "incoming": "node scripts/get-incoming-requests.mjs",
+    "test": "node --test"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",

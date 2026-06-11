@@ -123,6 +123,7 @@ Configuration:
 MCP_HTTP_HOST=127.0.0.1
 MCP_HTTP_PORT=3000
 MCP_HTTP_PATH=/mcp
+MCP_BEARER_TOKEN=replace_with_a_long_random_token
 ```
 
 Health check:
@@ -131,10 +132,16 @@ Health check:
 curl http://127.0.0.1:3000/health
 ```
 
+`/health` remains public. When `MCP_BEARER_TOKEN` is set, `/mcp` and `/tools` require:
+
+```text
+Authorization: Bearer <MCP_BEARER_TOKEN>
+```
+
 Debug tool listing for Postman or a browser:
 
 ```bash
-curl http://127.0.0.1:3000/tools
+curl -H "Authorization: Bearer $MCP_BEARER_TOKEN" http://127.0.0.1:3000/tools
 ```
 
 The real MCP endpoint is JSON-RPC over HTTP. A plain `GET /mcp` will not list tools.
@@ -148,6 +155,7 @@ Headers:
 ```text
 Content-Type: application/json
 Accept: application/json, text/event-stream
+Authorization: Bearer <MCP_BEARER_TOKEN>
 ```
 
 Body:
@@ -177,6 +185,7 @@ Headers:
 ```text
 Content-Type: application/json
 Accept: application/json, text/event-stream
+Authorization: Bearer <MCP_BEARER_TOKEN>
 mcp-session-id: <copied-session-id>
 ```
 
@@ -197,4 +206,4 @@ For ChatGPT MCP, deploy or tunnel the HTTP server behind a public HTTPS URL and 
 https://your-domain.example/mcp
 ```
 
-Do not expose this server publicly without an access-control layer, because its tools log in to the pharmacy system using the credentials configured in `.env`.
+Do not expose this server publicly without `MCP_BEARER_TOKEN` or another access-control layer, because its tools log in to the pharmacy system using the credentials configured in `.env`.

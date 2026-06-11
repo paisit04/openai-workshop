@@ -33,14 +33,18 @@ export async function getSystemOverviewMetrics(options = {}) {
     await page.getByText('System Overview', { exact: false }).waitFor({ timeout: config.timeout });
 
     const overviewText = await page.locator('body').innerText();
-    const result = {};
-
-    for (const metric of getMetricDefinitions()) {
-      result[metric.key] = readNumberAfterLabel(overviewText, metric.label);
-    }
-
-    return result;
+    return parseSystemOverviewMetrics(overviewText);
   });
+}
+
+export function parseSystemOverviewMetrics(overviewText) {
+  const result = {};
+
+  for (const metric of getMetricDefinitions()) {
+    result[metric.key] = readNumberAfterLabel(overviewText, metric.label);
+  }
+
+  return result;
 }
 
 export async function getIncomingRequests(options = {}) {
